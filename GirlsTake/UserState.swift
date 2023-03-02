@@ -20,27 +20,21 @@ class UserStateViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var isBusy = false
     @Published var storageRef = Storage.storage().reference()
-    
-    
-    func getUser() -> User {
-        let user = Auth.auth().currentUser
-        if let user = user {
-            let uid = user.uid
-            let email = user.email
-            let photoURL = user.photoURL
-            let displayName = user.displayName
-            
-//        }else{
-//            user! {
-//                let uid = "VXpyOAGFNvg0bkSPecKBgpDFzgt2"
-//                let email = "email@gmail.com"
-//                let photoURL = "profile_photos/.jpg"
-//                let displayName = "Christian"
-//
-//            }
+    var user: User? {
+            didSet {
+                objectWillChange.send()
+            }
         }
-        return user!
-    }
+    
+    func listenToAuthState() {
+            Auth.auth().addStateDidChangeListener { [weak self] _, user in
+                guard let self = self else {
+                    return
+                }
+                self.user = user
+            }
+        }
+    
     
     func login(password: String, email: String){
         Auth.auth().signIn(withEmail: email, password: password){result, error in
@@ -64,6 +58,14 @@ class UserStateViewModel: ObservableObject {
             }
         }
         }
+    func signOut() {
+            do {
+                try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+                print("Error signing out: %@", signOutError)
+            }
+        }
+    
     func updateProfilePhoto(photo: UIImage){
         
         let imageData = photo.jpegData(compressionQuality: 0.8)
@@ -76,9 +78,9 @@ class UserStateViewModel: ObservableObject {
             return
         }
         
-        let user = self.getUser()
+        let user = self.user
 
-        let path = "profile_photos/\(user.uid).jpg"
+        let path = "profile_photos/\(user!.uid).jpg"
         let fileRef = storageRef.child(path)
         
         fileRef.putData(imageData!, metadata: nil) { metadata,

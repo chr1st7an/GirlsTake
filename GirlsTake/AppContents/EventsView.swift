@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EventsView: View {
     var body: some View {
+        //Add calendar ui (weekly or monthly) linked to user-registered events
         Text("events")
     }
 }

@@ -20,24 +20,23 @@ struct GirlsTakeApp: App {
     var body: some Scene {
         WindowGroup {
                     NavigationView{
-                        ApplicationSwitcher()
+                        ContentDelegator().environmentObject(userStateViewModel)
                     }
                     .navigationViewStyle(.stack)
-                    .environmentObject(userStateViewModel)
+//                    .environmentObject(userStateViewModel)
                 }
     }
 }
 
-struct ApplicationSwitcher: View {
-    
-    @EnvironmentObject var vm: UserStateViewModel
-    
-    var body: some View {
-        if (vm.isLoggedIn) {
-            HomeView().environmentObject(vm)
-        } else {
-            LoginView()
-        }
-        
-    }
-}
+//struct ApplicationSwitcher: View {
+//
+//    @EnvironmentObject var vm: UserStateViewModel
+//
+//    var body: some View {
+//        if vm.isLoggedIn {
+//            HomeView().environmentObject(vm)
+//        } else {
+//            LoginView()
+//        }
+//    }
+//}

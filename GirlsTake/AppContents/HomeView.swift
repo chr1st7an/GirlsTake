@@ -6,17 +6,11 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 struct HomeView: View {
     var body: some View {
-        TabView {
-            EventsView().tabItem {
-                Label("Events", systemImage: "calendar")
-            }
-            ProfileView().tabItem {
-                Label("Profile", systemImage: "person")
-            }
-        }
+        Text("home")
     }
 }
 
