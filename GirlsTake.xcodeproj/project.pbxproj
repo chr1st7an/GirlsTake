@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		36528BC82996B30C00B5726F /* GirlsTakeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36528BC72996B30C00B5726F /* GirlsTakeApp.swift */; };
-		36528BCA2996B30C00B5726F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36528BC92996B30C00B5726F /* ContentView.swift */; };
 		36528BCC2996B30D00B5726F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36528BCB2996B30D00B5726F /* Assets.xcassets */; };
 		36528BCF2996B30D00B5726F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36528BCE2996B30D00B5726F /* Preview Assets.xcassets */; };
 		36528BD62996B43900B5726F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36528BD52996B43900B5726F /* GoogleService-Info.plist */; };
@@ -39,15 +38,28 @@
 		36528C092996B61B00B5726F /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 36528C082996B61B00B5726F /* FirebaseRemoteConfigSwift */; };
 		36528C0B2996B61B00B5726F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 36528C0A2996B61B00B5726F /* FirebaseStorage */; };
 		36528C0D2996B61B00B5726F /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 36528C0C2996B61B00B5726F /* FirebaseStorageCombine-Community */; };
+		36528C0F2996CF2B00B5726F /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36528C0E2996CF2B00B5726F /* RegisterView.swift */; };
+		36528C1129975A1300B5726F /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36528C1029975A1300B5726F /* UserProfile.swift */; };
+		36E55E9C29AE8B10004B1D75 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E55E9B29AE8B10004B1D75 /* UserState.swift */; };
+		36E55EA029AE8CFC004B1D75 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E55E9F29AE8CFC004B1D75 /* LoginView.swift */; };
+		36E55EA229AE8D56004B1D75 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E55EA129AE8D56004B1D75 /* HomeView.swift */; };
+		36E55EA429B01F36004B1D75 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E55EA329B01F36004B1D75 /* ProfileView.swift */; };
+		36E55EA629B01F51004B1D75 /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E55EA529B01F51004B1D75 /* EventsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		36528BC42996B30C00B5726F /* GirlsTake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GirlsTake.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36528BC72996B30C00B5726F /* GirlsTakeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GirlsTakeApp.swift; sourceTree = "<group>"; };
-		36528BC92996B30C00B5726F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		36528BCB2996B30D00B5726F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		36528BCE2996B30D00B5726F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		36528BD52996B43900B5726F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		36528C0E2996CF2B00B5726F /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
+		36528C1029975A1300B5726F /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		36E55E9B29AE8B10004B1D75 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
+		36E55E9F29AE8CFC004B1D75 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		36E55EA129AE8D56004B1D75 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		36E55EA329B01F36004B1D75 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		36E55EA529B01F51004B1D75 /* EventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +120,13 @@
 			isa = PBXGroup;
 			children = (
 				36528BC72996B30C00B5726F /* GirlsTakeApp.swift */,
-				36528BC92996B30C00B5726F /* ContentView.swift */,
+				36E55E9B29AE8B10004B1D75 /* UserState.swift */,
+				36E55EA329B01F36004B1D75 /* ProfileView.swift */,
+				36E55EA529B01F51004B1D75 /* EventsView.swift */,
+				36E55EA129AE8D56004B1D75 /* HomeView.swift */,
+				36E55E9F29AE8CFC004B1D75 /* LoginView.swift */,
+				36528C0E2996CF2B00B5726F /* RegisterView.swift */,
+				36528C1029975A1300B5726F /* UserProfile.swift */,
 				36528BD52996B43900B5726F /* GoogleService-Info.plist */,
 				36528BCB2996B30D00B5726F /* Assets.xcassets */,
 				36528BCD2996B30D00B5726F /* Preview Content */,
@@ -227,7 +245,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				36528BCA2996B30C00B5726F /* ContentView.swift in Sources */,
+				36E55E9C29AE8B10004B1D75 /* UserState.swift in Sources */,
+				36E55EA029AE8CFC004B1D75 /* LoginView.swift in Sources */,
+				36528C1129975A1300B5726F /* UserProfile.swift in Sources */,
+				36E55EA629B01F51004B1D75 /* EventsView.swift in Sources */,
+				36E55EA229AE8D56004B1D75 /* HomeView.swift in Sources */,
+				36528C0F2996CF2B00B5726F /* RegisterView.swift in Sources */,
+				36E55EA429B01F36004B1D75 /* ProfileView.swift in Sources */,
 				36528BC82996B30C00B5726F /* GirlsTakeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,4 +1,11 @@
 //
+//  LoginView.swift
+//  GirlsTake
+//
+//  Created by Christian Rodriguez on 2/28/23.
+//
+
+//
 //  ContentView.swift
 //  GirlsTake
 //
@@ -38,25 +45,15 @@ let gtPink =  Color.init(hex: "FFEAED")
 let gtGreen = Color.init(hex: "B2C4A8")
 let gtCream = Color.init(hex: "FAF8F0")
     
-struct ContentView: View {
+struct LoginView: View {
+    @EnvironmentObject var vm: UserStateViewModel
     @State private var email = ""
     @State private var password = ""
-    @State private var loggedIn = false
-    
-    var body: some View{
-        if loggedIn{
-            //nav to main screen
-            HomeView()
-        } else{
-            base
-        }
-    }
-    var base: some View {
+
+    var body: some View {
         NavigationStack{
             ZStack {
                 Color.white
-                //            RoundedRectangle(cornerRadius: 30, style: .continuous).foregroundStyle(.linearGradient(colors: [.white], startPoint: UnitPoint.topLeading, endPoint: UnitPoint.bottomTrailing))
-                //                .frame(width: 200, height:40)
                 VStack(spacing: 20){
                     Image("Olives").resizable().scaledToFit().frame(width: 250, height: 250)
                     TextField("", text: $email).textFieldStyle(.plain).placeholder(when: email.isEmpty) {
@@ -69,7 +66,7 @@ struct ContentView: View {
                     }
                     Rectangle().foregroundColor(.gray).frame(width: 350, height: 1).padding(-10)
                     Button{
-//                        UserState.login()
+                        vm.login(password: password, email: email)
                     }label: {
                         Text("Login").frame(width: 200, height: 40).foregroundColor(.black).fontDesign(.serif).background( RoundedRectangle(cornerRadius: 10 ,style: .continuous).fill(.linearGradient(colors: [gtPink, .white], startPoint: .bottom, endPoint: .top)).shadow(radius: 1)
                         )
@@ -84,9 +81,9 @@ struct ContentView: View {
 
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        LoginView()
     }
 }
 
@@ -101,4 +98,5 @@ extension View {
             }
         }
 }
+
 
