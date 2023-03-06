@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ContentDelegator: View {
     @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var eventManager : EventManager
     
     var body: some View {
         Group {
         if vm.user != nil {
-        ContentView().environmentObject(vm)
+            ContentView().environmentObject(vm)
         } else {
         LoginView().environmentObject(vm)
         }
@@ -26,6 +27,6 @@ struct ContentDelegator: View {
 
 struct ContentDelegator_Previews: PreviewProvider {
     static var previews: some View {
-        ContentDelegator()
+        ContentDelegator().environmentObject(UserStateViewModel())
     }
 }

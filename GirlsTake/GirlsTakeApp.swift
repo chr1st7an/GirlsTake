@@ -12,6 +12,7 @@ import Firebase
 struct GirlsTakeApp: App {
     
     @StateObject var userStateViewModel = UserStateViewModel()
+    @StateObject var eventManager = EventManager()
     
     init(){
         FirebaseApp.configure()
@@ -20,10 +21,11 @@ struct GirlsTakeApp: App {
     var body: some Scene {
         WindowGroup {
                     NavigationView{
-                        ContentDelegator().environmentObject(userStateViewModel)
+                        ContentDelegator().environmentObject(userStateViewModel).environmentObject(eventManager)
                     }
                     .navigationViewStyle(.stack)
-//                    .environmentObject(userStateViewModel)
+                    .environmentObject(userStateViewModel)
+                    .environmentObject(eventManager)
                 }
     }
 }

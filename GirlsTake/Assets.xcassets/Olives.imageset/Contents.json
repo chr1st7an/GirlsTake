@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "appicion 1.png",
+      "filename" : "Olives.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "appicion.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "appicion 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

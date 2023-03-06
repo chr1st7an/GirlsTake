@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import FirebaseFirestoreSwift
 
-struct UserProfile: Identifiable {
-    var id: ObjectIdentifier
+struct UserProfile: Hashable {
+    @DocumentID var id: String?
     var email: String
-    var phone: String
     var dob: String
     var location: String
+    var profilePhoto: UIImage
+    var eventsAttended : [String]
     
 }

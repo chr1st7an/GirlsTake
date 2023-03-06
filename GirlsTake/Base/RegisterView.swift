@@ -69,11 +69,6 @@ struct RegisterView: View {
                     Text("Name")
                         .foregroundColor(gtGreen).bold().padding(.top, -6.0).fontDesign(.serif)
                 }
-//                Rectangle().foregroundColor(.gray).frame(width: 350, height: 1).padding(-10)
-//                TextField("", text: $phone).textFieldStyle(.plain).placeholder(when: phone.isEmpty) {
-//                    Text("Phone Number")
-//                        .foregroundColor(gtGreen).bold().padding(.top, -15.0).fontDesign(.serif)
-//                }
                 Rectangle().foregroundColor(.gray).frame(width: 350, height: 1).padding(-10)
                 DatePicker(selection: $dob, in: ...Date.now, displayedComponents: .date){
                     Text("Enter DOB").foregroundColor(gtGreen).bold().padding(.top, -2.0).fontDesign(.serif)

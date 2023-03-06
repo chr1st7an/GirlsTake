@@ -10,26 +10,43 @@ import FirebaseStorage
 
 struct ProfileView: View {
     @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var eventManager : EventManager
+
     
     var body: some View {
-        let user = vm.user!
-        VStack{
-            Text(user.displayName!)
-            Text(user.email!)
-                    Button{
-                        vm.signOut()
-                    }label: {
-                        Text("Sign Out").frame(width: 200, height: 40).foregroundColor(.black).fontDesign(.serif).background( RoundedRectangle(cornerRadius: 10 ,style: .continuous).fill(.linearGradient(colors: [gtPink, .white], startPoint: .bottom, endPoint: .top)).shadow(radius: 1)
-                        )
-                    }
-        }
-        
-//        Text("Profile")
-    }
-}
+                ZStack{
+                    //Background
+                    VStack{
+                        Header()
+                        Spacer()
+                        HStack{
+                            Spacer()
+                            Spacer()
+                            VStack{
+                                Text(vm.userProfile.id!)
+                                Text(vm.userProfile.location)
+                                Text(vm.userProfile.dob)
+                                
+                            }
 
+                            Spacer(minLength: 100)
+                            Image(uiImage: vm.userProfile.profilePhoto)
+                                .resizable()
+                                .frame(width: 175, height: 175)
+                                .clipShape(Circle())
+                            Spacer()
+                        }
+//                        Spacer(minLength: 510)
+                    }
+                    
+                }.onAppear{
+                    vm.listenToAuthState()
+                }
+                
+        }
+    }
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
+        ProfileView().environmentObject(UserStateViewModel())
     }
 }
