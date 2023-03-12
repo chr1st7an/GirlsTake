@@ -22,7 +22,6 @@ class UserStateViewModel: ObservableObject {
     @Published var storageRef = Storage.storage().reference()
     @Published var databaseRef = Firestore.firestore()
     @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "21", location: "NYC", profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [])
-    @Published var eventManager = EventManager()
     
     func getPhoto(url:String) {
         let profileRef = storageRef.child(url)
@@ -43,6 +42,10 @@ class UserStateViewModel: ObservableObject {
         }
     
     func listenToAuthState() {
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = true
+        settings.cacheSizeBytes = FirestoreCacheSizeUnlimited
+        databaseRef.settings = settings
             Auth.auth().addStateDidChangeListener { [weak self] _, user in
                 guard let self = self else {
                     //no more logged in user
@@ -54,28 +57,8 @@ class UserStateViewModel: ObservableObject {
                 if user != nil {
                     self.user = user
                     let uid = user!.uid
-                    //fetches user info with uid
-                    let docRef = self.databaseRef.collection("users").document(uid)
-                    docRef.getDocument { [self] (document, error) in
-                        guard error == nil else {
-                            print("error", error ?? "")
-                            return
-                        }
-                        //if exists, populates local userInfo with data
-                        if let document = document, document.exists {
-                            let data = document.data()
-                            if let data = data {
-                                print("data", data)
-                                self.userProfile.id = data["name"] as? String
-                                self.userProfile.email = data["email"] as! String
-                                self.userProfile.location =  data["location"] as! String
-                                self.userProfile.dob = data["dob"] as! String
-                                let url = data["profileRef"] as! String
-                                self.getPhoto(url: url)
-                            
-                            }
-                        }
-                        
+                    if self.userProfile.id == "Name"{
+                        self.fillInstance(uid: uid)
                     }
                     self.isLoggedIn = true
                 } else{
@@ -93,7 +76,7 @@ class UserStateViewModel: ObservableObject {
                 print(error!.localizedDescription)
             } else{
                 self.isLoggedIn.toggle()
-                self.listenToAuthState()
+//                self.listenToAuthState()
             }
         }
     }
@@ -112,7 +95,7 @@ class UserStateViewModel: ObservableObject {
             //writes user data to database with uid as key
             let docRef = self.databaseRef.collection("users").document(user!.uid)
             let userData: [ String: Any ] = [
-                "name": self.userProfile.id!,
+                "name": self.userProfile.id,
                 "email": self.userProfile.email,
                 "profileRef": "profile_photos/\(user!.uid).jpg",
                 "location": self.userProfile.location,
@@ -127,7 +110,6 @@ class UserStateViewModel: ObservableObject {
                     print("Success")
                 }
             }
-            self.listenToAuthState()
             }
         }
         }
@@ -141,7 +123,42 @@ class UserStateViewModel: ObservableObject {
             }
         
         }
+    func deleteAccount(){
+        let user = Auth.auth().currentUser
+        user?.delete { error in
+          if let error = error {
+              print(error)
+          } else {
+             print("Account deleted.")
+              //function call to remove them from upcoming events account is registered for.
+          }
+        }
+    }
     
+    func fillInstance(uid: String){
+        let docRef = self.databaseRef.collection("users").document(uid)
+        docRef.getDocument { [self] (document, error) in
+            guard error == nil else {
+                print("error", error ?? "")
+                return
+            }
+            //if exists, populates local userInfo with data
+            if let document = document, document.exists {
+                let data = document.data()
+                if let data = data {
+                    print("data", data)
+                    self.userProfile.id = data["name"] as! String
+                    self.userProfile.email = data["email"] as! String
+                    self.userProfile.location =  data["location"] as! String
+                    self.userProfile.dob = data["dob"] as! String
+                    let url = data["profileRef"] as! String
+                    self.getPhoto(url: url)
+                
+                }
+            }
+            
+        }
+    }
     func updateProfilePhoto(photo: UIImage){
 
         let imageData = photo.jpegData(compressionQuality: 0.8)
@@ -172,34 +189,36 @@ class UserStateViewModel: ObservableObject {
         }
     }
     
-    func joinEvent(event: Event){
-        self.listenToAuthState()
-        var pastEvents = self.userProfile.eventsAttended
-        print(pastEvents)
-        pastEvents.append(event.id!)
-        print(pastEvents)
-        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : pastEvents ], merge: true){ err in
-            if let err = err {
-                print("Error writing document: \(err)")
-            } else {
-                print("Document successfully written!")
-            }
-        }
-    }
-    func leaveEvent(event: Event){
-        self.listenToAuthState()
-        let pastEvents = self.userProfile.eventsAttended
-        print(pastEvents)
-        let update = pastEvents.filter { $0 != event.id }
-        print(pastEvents)
-        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : update ], merge: true){ err in
-            if let err = err {
-                print("Error writing document: \(err)")
-            } else {
-                print("Document successfully written!")
-            }
-        }
-    }
+    //SHOULD B IN ANOTHER FILE
+//    func joinEvent(event: Event){
+////        self.listenToAuthState()
+//        var pastEvents = self.userProfile.eventsAttended //or let
+//        print(pastEvents)
+//        pastEvents.append(event.id!)
+//        print(pastEvents)
+//        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : pastEvents ], merge: true){ err in
+//            if let err = err {
+//                print("Error writing document: \(err)")
+//            } else {
+//                print("Document successfully written!")
+//            }
+//        }
+//    }
+//
+//    func leaveEvent(event: Event){
+////        self.listenToAuthState()
+//        let pastEvents = self.userProfile.eventsAttended //or let
+//        print(pastEvents)
+//        let update = pastEvents.filter { $0 != event.id }
+//        print(pastEvents)
+//        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : update ], merge: true){ err in
+//            if let err = err {
+//                print("Error writing document: \(err)")
+//            } else {
+//                print("Document successfully written!")
+//            }
+//        }
+//    }
 }
 
 

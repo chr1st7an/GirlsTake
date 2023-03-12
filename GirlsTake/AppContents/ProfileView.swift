@@ -10,9 +10,6 @@ import FirebaseStorage
 
 struct ProfileView: View {
     @EnvironmentObject var vm: UserStateViewModel
-    @EnvironmentObject var eventManager : EventManager
-
-    
     var body: some View {
                 ZStack{
                     //Background
@@ -23,7 +20,7 @@ struct ProfileView: View {
                             Spacer()
                             Spacer()
                             VStack{
-                                Text(vm.userProfile.id!)
+                                Text(vm.userProfile.id)
                                 Text(vm.userProfile.location)
                                 Text(vm.userProfile.dob)
                                 
@@ -39,8 +36,6 @@ struct ProfileView: View {
 //                        Spacer(minLength: 510)
                     }
                     
-                }.onAppear{
-                    vm.listenToAuthState()
                 }
                 
         }

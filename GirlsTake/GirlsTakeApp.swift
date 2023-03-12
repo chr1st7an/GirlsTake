@@ -12,7 +12,9 @@ import Firebase
 struct GirlsTakeApp: App {
     
     @StateObject var userStateViewModel = UserStateViewModel()
-    @StateObject var eventManager = EventManager()
+    @State private var isActive = false
+    @State private var size = 0.8
+    @State private var opacity = 0.5
     
     init(){
         FirebaseApp.configure()
@@ -20,25 +22,16 @@ struct GirlsTakeApp: App {
     
     var body: some Scene {
         WindowGroup {
-                    NavigationView{
-                        ContentDelegator().environmentObject(userStateViewModel).environmentObject(eventManager)
-                    }
-                    .navigationViewStyle(.stack)
-                    .environmentObject(userStateViewModel)
-                    .environmentObject(eventManager)
+            if isActive{
+                NavigationView{
+                    ContentDelegator().environmentObject(userStateViewModel)
+                }
+                .navigationViewStyle(.stack)
+                
+            }else {
+                SplashView(size: $size, opacity: $opacity, isActive: $isActive)
+            }
                 }
     }
 }
 
-//struct ApplicationSwitcher: View {
-//
-//    @EnvironmentObject var vm: UserStateViewModel
-//
-//    var body: some View {
-//        if vm.isLoggedIn {
-//            HomeView().environmentObject(vm)
-//        } else {
-//            LoginView()
-//        }
-//    }
-//}

@@ -8,16 +8,25 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: UserStateViewModel
+    @EnvironmentObject var userState: UserStateViewModel
     var body: some View {
         NavigationView{
-            Button{
-                vm.signOut()
-            }label: {
-                Text("Sign Out").frame(width: 200, height: 40).foregroundColor(.black).fontDesign(.serif).background( RoundedRectangle(cornerRadius: 10 ,style: .continuous).fill(.linearGradient(colors: [gtPink, .white], startPoint: .bottom, endPoint: .top))
-                )
+            VStack{
+                Button{
+                    userState.signOut()
+                }label: {
+                    Text("Sign Out").frame(width: 200, height: 40).foregroundColor(.black).fontDesign(.serif).background( RoundedRectangle(cornerRadius: 10 ,style: .continuous).fill(.linearGradient(colors: [gtPink, .white], startPoint: .bottom, endPoint: .top))
+                    )
+                }
+                Button{
+                    userState.deleteAccount()
+                }label: {
+                    Text("Delete account").frame(width: 200, height: 40).foregroundColor(.black).fontDesign(.serif).background( RoundedRectangle(cornerRadius: 10 ,style: .continuous).fill(.linearGradient(colors: [gtPink, .white], startPoint: .bottom, endPoint: .top))
+                    )
+                }
+                
+                
             }
-            
         }
     }
 }

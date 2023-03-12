@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct ContentDelegator: View {
-    @EnvironmentObject var vm: UserStateViewModel
-    @EnvironmentObject var eventManager : EventManager
+    @EnvironmentObject var userState: UserStateViewModel
+//    @EnvironmentObject var eventManager : EventManager
     
     var body: some View {
         Group {
-        if vm.user != nil {
-            ContentView().environmentObject(vm)
+        if userState.user != nil {
+            ContentView()
         } else {
-        LoginView().environmentObject(vm)
+        LoginView()
         }
         }.onAppear {
-        vm.listenToAuthState()
+            userState.listenToAuthState()
         }
     }
     

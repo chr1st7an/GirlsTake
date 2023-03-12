@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseFirestoreSwift
 
 struct UserProfile: Hashable {
-    @DocumentID var id: String?
+    var id: String
     var email: String
     var dob: String
     var location: String
