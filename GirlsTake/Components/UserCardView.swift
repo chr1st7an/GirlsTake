@@ -10,24 +10,22 @@ import Firebase
 import FirebaseStorage
 
 struct UserCardView: View {
-    @State var storageManager : StorageManager
-    let user : String
+    let user : UserPreview
     
-    init(user: String) {
+    init(user: UserPreview) {
         self.user = user
-        self.storageManager = StorageManager()
-        self.storageManager.getUserPreview(user: user)
+
     }
     var body: some View {
         HStack(spacing: 25){
-            Image(uiImage: self.storageManager.user.profilePhoto).resizable().frame(width: 45, height: 45, alignment: .trailing).clipShape(Circle())
+            Image(uiImage: self.user.profilePhoto).resizable().frame(width: 45, height: 45, alignment: .trailing).clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(self.storageManager.user.name)
+                Text(self.user.name)
                     .fontWeight(.semibold)
                     .foregroundColor(.black)
 
-                Text(self.storageManager.user.location)
+                Text(self.user.location)
                     .font(.caption)
                     .foregroundColor(.gray)
             }
@@ -39,8 +37,8 @@ struct UserCardView: View {
     }
 }
 
-struct UserCardView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserCardView(user: "hTzL4LdkWGbm06hsZfCZBehGa6f2").previewLayout(.sizeThatFits)
-    }
-}
+//struct UserCardView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserCardView(user: "hTzL4LdkWGbm06hsZfCZBehGa6f2").previewLayout(.sizeThatFits)
+//    }
+//}

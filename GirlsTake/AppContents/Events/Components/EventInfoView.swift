@@ -36,8 +36,8 @@ struct EventInfoView: View {
     }
 }
 
-struct EventInfoView_Previews: PreviewProvider {
-    static var previews: some View {
-        EventInfoView(event: Event(Title: "Event", Address: " 123 Event Street", Venue: "Bar", Date: "June 1 @9pm", Attendees: ["String"], Photos: "sample"))
-    }
-}
+//struct EventInfoView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EventInfoView(event: Event(Title: "Event", Address: " 123 Event Street", Venue: "Bar", Date: "June 1 @9pm", Attendees: ["String"], Photos: "sample"))
+//    }
+//}
