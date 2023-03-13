@@ -22,7 +22,7 @@ struct ContentView: View {
                     }
                     NavigationView {
                         EventsView(eventState: eventState)
-                    }.tag(ContentViewTab.calendar)
+                    }.tag(ContentViewTab.event)
                     .tabItem {
                         Label("Events", systemImage: "calendar")
                     }
@@ -42,22 +42,24 @@ class AppState: ObservableObject {
     @Published var selectedTab: ContentViewTab = .home
     @Published var homeNavigation: [HomeNavDestination] = []
     @Published var profileNavigation: [ProfileNavDestination] = []
-    @Published var calendarNavigation: [ProfileNavDestination] = []
+    @Published var eventNavigation: [eventNavDestination] = []
 }
 enum ContentViewTab {
     case home
-    case calendar
+    case event
     case profile
 }
 enum HomeNavDestination {
-    case eventDetails
+    case settings
+//    case eventDetails
 //    case otherDetails
 }
 
 enum ProfileNavDestination {
     case settings
 }
-enum CalendarNavDestination {
+enum eventNavDestination {
+    case eventDetails
     case settings
 }
 struct ContentView_Previews: PreviewProvider {

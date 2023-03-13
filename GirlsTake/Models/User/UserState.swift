@@ -20,7 +20,7 @@ class UserStateViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var storageRef = Storage.storage().reference()
     @Published var databaseRef = Firestore.firestore()
-    @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "21", location: "NYC", profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [])
+    @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "10/11/2001", age: 21, location: "NYC", links: [], profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [])
     
     init(){
         let settings = FirestoreSettings()
@@ -82,6 +82,8 @@ class UserStateViewModel: ObservableObject {
         }
     }
     func register(password: String, email: String, displayName: String, profilePhoto: UIImage, DoB: Date, Location: String){
+        let formatter1 = DateFormatter()
+        formatter1.dateStyle = .short
         Auth.auth().createUser(withEmail: email, password: password){ result, error in if error != nil{
             //Add frontend pop-up alert for error
             //Figure out error catching for invalid Dob, Phone, etc.
@@ -90,8 +92,10 @@ class UserStateViewModel: ObservableObject {
             self.isLoggedIn.toggle()
             //Adds profile photo to storage
             self.updateProfilePhoto(photo: profilePhoto)
+            let dob = formatter1.string(from: DoB)
             //populates instance of userInfo
-            self.userProfile = UserProfile(id: displayName, email: email, dob: "dob", location: Location, profilePhoto: profilePhoto, eventsAttended: [])
+            self.userProfile = UserProfile(id: displayName, email: email, dob: dob, age: 21, location: Location, links: [], profilePhoto: profilePhoto, eventsAttended: [])
+            self.getAge(date: dob)
             let user = result?.user
             //writes user data to database with uid as key
             let docRef = self.databaseRef.collection("users").document(user!.uid)
@@ -100,7 +104,8 @@ class UserStateViewModel: ObservableObject {
                 "email": self.userProfile.email,
                 "profileRef": "profile_photos/\(user!.uid).jpg",
                 "location": self.userProfile.location,
-                "dob": self.userProfile.dob,
+                "dob": dob,
+                "links": self.userProfile.links,
                 "eventsAttended": self.userProfile.eventsAttended
         
             ]
@@ -154,11 +159,20 @@ class UserStateViewModel: ObservableObject {
                     self.userProfile.dob = data["dob"] as! String
                     let url = data["profileRef"] as! String
                     self.getPhoto(url: url)
-                
+                    self.getAge(date: data["dob"] as! String)
+                    self.userProfile.links = data["links"] as! [String]
                 }
             }
             
         }
+    }
+    func getAge(date: String){
+        let formatter1 = DateFormatter()
+        formatter1.dateStyle = .short
+        let birthdate = formatter1.date(from: date) ?? Date.now
+        
+        let age = Calendar.current.dateComponents([.year, .month, .day], from: birthdate, to: Date())
+        self.userProfile.age = age.year ?? 1
     }
     func updateProfilePhoto(photo: UIImage){
 
@@ -189,37 +203,24 @@ class UserStateViewModel: ObservableObject {
             }
         }
     }
-    
-    //SHOULD B IN ANOTHER FILE
-//    func joinEvent(event: Event){
-////        self.listenToAuthState()
-//        var pastEvents = self.userProfile.eventsAttended //or let
-//        print(pastEvents)
-//        pastEvents.append(event.id!)
-//        print(pastEvents)
-//        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : pastEvents ], merge: true){ err in
-//            if let err = err {
-//                print("Error writing document: \(err)")
-//            } else {
-//                print("Document successfully written!")
-//            }
-//        }
-//    }
-//
-//    func leaveEvent(event: Event){
-////        self.listenToAuthState()
-//        let pastEvents = self.userProfile.eventsAttended //or let
-//        print(pastEvents)
-//        let update = pastEvents.filter { $0 != event.id }
-//        print(pastEvents)
-//        self.databaseRef.collection("users").document(self.user!.uid).setData(["eventsAttended" : update ], merge: true){ err in
-//            if let err = err {
-//                print("Error writing document: \(err)")
-//            } else {
-//                print("Document successfully written!")
-//            }
-//        }
-//    }
+    func addLink(url:String){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "links" : FieldValue.arrayUnion([url])])
+        self.userProfile.links.append(url)
+    }
+
+    func joinEvent(event: Event){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "eventsAttended" : FieldValue.arrayUnion([event.id!])])
+    }
+
+    func leaveEvent(event: Event){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "eventsAttended" : FieldValue.arrayRemove([event.id!])])
+    }
 }
 
 

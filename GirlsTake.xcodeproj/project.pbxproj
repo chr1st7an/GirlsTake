@@ -11,6 +11,7 @@
 		3637147929BE75860078698B /* EventState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3637147829BE75860078698B /* EventState.swift */; };
 		3637147B29BF98C80078698B /* EventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3637147A29BF98C80078698B /* EventsView.swift */; };
 		3637147D29BF98FB0078698B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3637147C29BF98FB0078698B /* HomeView.swift */; };
+		3637148529BFD2510078698B /* Socials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3637148429BFD2510078698B /* Socials.swift */; };
 		36528BC82996B30C00B5726F /* GirlsTakeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36528BC72996B30C00B5726F /* GirlsTakeApp.swift */; };
 		36528BCC2996B30D00B5726F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36528BCB2996B30D00B5726F /* Assets.xcassets */; };
 		36528BCF2996B30D00B5726F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36528BCE2996B30D00B5726F /* Preview Assets.xcassets */; };
@@ -69,6 +70,7 @@
 		3637147829BE75860078698B /* EventState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventState.swift; sourceTree = "<group>"; };
 		3637147A29BF98C80078698B /* EventsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsView.swift; sourceTree = "<group>"; };
 		3637147C29BF98FB0078698B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		3637148429BFD2510078698B /* Socials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socials.swift; sourceTree = "<group>"; };
 		36528BC42996B30C00B5726F /* GirlsTake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GirlsTake.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36528BC72996B30C00B5726F /* GirlsTakeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GirlsTakeApp.swift; sourceTree = "<group>"; };
 		36528BCB2996B30D00B5726F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -157,10 +159,10 @@
 		3637148029BF9A630078698B /* User */ = {
 			isa = PBXGroup;
 			children = (
-				36E55EAF29B06371004B1D75 /* UserBaseManager.swift */,
 				36E55E9B29AE8B10004B1D75 /* UserState.swift */,
 				36528C1029975A1300B5726F /* UserProfile.swift */,
 				36E55ECC29B7C337004B1D75 /* UserPreview.swift */,
+				36E55EAF29B06371004B1D75 /* UserBaseManager.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -178,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				36E55EA329B01F36004B1D75 /* ProfileView.swift */,
+				3637148429BFD2510078698B /* Socials.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3637148529BFD2510078698B /* Socials.swift in Sources */,
 				36E55EC129B50D23004B1D75 /* Header.swift in Sources */,
 				36E55E9C29AE8B10004B1D75 /* UserState.swift in Sources */,
 				36E55EA029AE8CFC004B1D75 /* LoginView.swift in Sources */,

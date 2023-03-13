@@ -12,7 +12,6 @@ struct EventsView: View {
     @EnvironmentObject var vm: UserStateViewModel
     @State private var path = NavigationPath()
     @ObservedObject var eventState : EventStateViewModel
-    @State private var presentAlert = false
     @State private var name: String = ""
     @State private var carouselMode: Bool = false
     @Namespace private var animation
@@ -49,15 +48,6 @@ struct EventsView: View {
                 .navigationTitle("")
                 
             }.padding(.top, 15).ignoresSafeArea()
-//            Button("Create event"){
-//                presentAlert.toggle()
-//            }.alert("Enter Name", isPresented: $presentAlert, actions: {
-//                TextField("", text: $name)
-//                Button("Create", action: {eventManager.addEvent(name: name)})
-//                Button("Cancel", role: .cancel, action: {})
-//            }) {
-//                Text("CREATE EVENT")
-//            }
         }.refreshable {
             self.eventState.fetchEvents()
         }

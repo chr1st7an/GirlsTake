@@ -48,6 +48,7 @@ struct EventsPage: View {
                                             withAnimation(.spring()){
                                                 self.eventManager.removeAttendee(user: userState.user!.uid)
                                                 event.AttendeesString = event.AttendeesString.filter { $0 != userState.user!.uid }
+                                                userState.leaveEvent(event: event)
                                                 eventState.removeAttendee(event: event, userID: userState.user!.uid)
                                                 self.joining.toggle()
                                             }
@@ -74,6 +75,7 @@ struct EventsPage: View {
                                             withAnimation(.spring()){
                                                 eventState.addAttendee(event: event, userID: userState.user!.uid)
                                                 event.AttendeesString.append(userState.user!.uid)
+                                                userState.joinEvent(event: event)
                                                 eventManager.addAttendee(user: userState.user!.uid)
                                                 self.joining.toggle()
                                             }
