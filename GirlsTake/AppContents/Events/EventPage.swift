@@ -7,25 +7,29 @@
 
 import SwiftUI
 
-struct EventsView: View {
-    @ObservedObject var eventManager : EventManager
+struct EventsPage: View {
+    
+    @ObservedObject var eventState : EventStateViewModel
     @EnvironmentObject var userState : UserStateViewModel
-    @Namespace private var animation
     @State var event : Event
-    @State var imageManager = ImageManager()
-    var safeArea: EdgeInsets
-    var size: CGSize
+    @State var eventManager : EventManager
     @State private var inView: Bool = false
     @State private var isActive: Bool = false
+    @State private var joining: Bool = true
     @State private var size2 = 0.8
     @State private var opacity = 0.5
+    @Namespace private var animation
     
-    init(eventManager: EventManager, event: Event,safeArea: EdgeInsets, size: CGSize ) {
-        self.eventManager = eventManager
+    var safeArea: EdgeInsets
+    var size: CGSize
+    
+    init(eventState: EventStateViewModel, event: Event,safeArea: EdgeInsets, size: CGSize ) {
+        self.eventState = eventState
         self.safeArea = safeArea
         self.size = size
         self.event = event
-        self.imageManager.getEventCover(event: event)
+        self.eventState = eventState
+        self.eventManager = EventManager(event: event)
     }
     
     var body: some View {
@@ -38,11 +42,14 @@ struct EventsView: View {
                                 // MARK: Since We Ignored Top Edge
                                 let minY = proxy.frame(in: .named("SCROLL")).minY - safeArea.top
                                 VStack{
-                                    if (event.Attendees.contains(userState.user!.uid)) {
+                                    // JOIN/CANCEL TOGGLES
+                                    if (event.AttendeesString.contains(userState.user!.uid)) {
                                         Button {
                                             withAnimation(.spring()){
-                                                event.Attendees = self.event.Attendees.filter { $0 != userState.user!.uid }
-                                                eventManager.removeAttendee(event: event, userID: userState.user!.uid)
+                                                self.eventManager.removeAttendee(user: userState.user!.uid)
+                                                event.AttendeesString = event.AttendeesString.filter { $0 != userState.user!.uid }
+                                                eventState.removeAttendee(event: event, userID: userState.user!.uid)
+                                                self.joining.toggle()
                                             }
                                         } label: {
                                             HStack{
@@ -65,8 +72,10 @@ struct EventsView: View {
                                     } else {
                                         Button {
                                             withAnimation(.spring()){
-                                                eventManager.addAttendee(event: event, userID: userState.user!.uid)
-                                                event.Attendees.append(userState.user!.uid)
+                                                eventState.addAttendee(event: event, userID: userState.user!.uid)
+                                                event.AttendeesString.append(userState.user!.uid)
+                                                eventManager.addAttendee(user: userState.user!.uid)
+                                                self.joining.toggle()
                                             }
                                         } label: {
                                             HStack{
@@ -87,6 +96,7 @@ struct EventsView: View {
                                         .frame(maxWidth: .infinity,maxHeight: .infinity)
                                         .offset(y: minY < 50 ? -(minY - 50) : 0)
                                     }
+                                    // MORE INFO TOGGLE
                                     if inView{
                                         Button {
                                             withAnimation(){
@@ -117,12 +127,19 @@ struct EventsView: View {
                             .matchedGeometryEffect(id: "VIEW", in: animation)
                             
                             VStack{
+                                //EXTRA INFO
                                 if inView{
                                     EventInfoView(event: event)
                                         .transition(.asymmetric(insertion: .push(from: Edge.top), removal: .push(from: Edge.bottom))).padding([.top, .bottom], 20)
                                     
                                 }
-                                UserView()
+                                //USER VIEW
+                                if joining {
+                                    UserView()
+                                }else {
+                                    //Update with better loading screen
+                                    SplashView(size: $size2, opacity: $opacity, isActive: $joining)
+                                }
                                 Spacer()
                                 Image("Olives").resizable().frame(width: 50, height: 50).padding(.top, 40)
                             }.padding(.top,10)
@@ -145,7 +162,7 @@ struct EventsView: View {
             let minY = proxy.frame(in: .named("SCROLL")).minY
             let progress = minY / (height * (minY > 0 ? 0.5 : 0.8))
             
-            Image(uiImage: self.imageManager.cover)
+            Image(uiImage: self.eventManager.cover)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: size.width, height: size.height + (minY > 0 ? minY : 0))
@@ -191,8 +208,8 @@ struct EventsView: View {
     @ViewBuilder
     func UserView()->some View{
         VStack(spacing: 25){
-                ForEach(event.Attendees ,id: \.self){users in
-                    UserCardView(user: users)
+            ForEach(self.eventManager.userBase.users ,id: \.self){user in
+                    UserCardView(user: user)
                 }
             
         }.padding(15)

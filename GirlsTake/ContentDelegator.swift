@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentDelegator: View {
     @EnvironmentObject var userState: UserStateViewModel
-//    @EnvironmentObject var eventManager : EventManager
     
     var body: some View {
         Group {

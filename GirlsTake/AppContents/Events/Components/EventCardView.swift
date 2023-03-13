@@ -11,13 +11,11 @@ import FirebaseStorage
 func EventCardView(event: Event) -> some View {
     
     GeometryReader {
-        //            let cover = getCover(url: event.Photos)
         let size = $0.size
         let rect = $0.frame(in: .named("SCROLLVIEW"))
         
         HStack {
-            /// Book Detail Card
-            /// Placing this card above the cover image
+
             VStack(alignment: .leading, spacing: 6) {
                 Spacer(minLength: 10)
                 Text(event.Title)
@@ -30,13 +28,11 @@ func EventCardView(event: Event) -> some View {
                     .font(.caption)
                     .foregroundColor(.gray)
                     .fontDesign(.serif)
-//                    .padding(.top, 10)
                 
                 // Rating View
                 RatingView(rating: 4)
                     .padding(.top, 10)
                 
-//                Spacer(minLength: 10)
                 
                 HStack(spacing: 3) {
                     Text("\(event.Date)")
@@ -62,22 +58,8 @@ func EventCardView(event: Event) -> some View {
                     .fill(gtCream)
                 /// Applying Shadow
                     .shadow(color: .black.opacity(0.08), radius: 8, x: 5, y: 5)
-                //                        .shadow(color: .black.opacity(0.08), radius: 8, x: -5, y: -5)
             }
-            //                .zIndex(1)
-            
-            ////                / Book Cover Image
-            //                ZStack {
-            //                    Image("sample")
-            //                        .resizable()
-            //                        .aspectRatio(contentMode: .fill)
-            //                        .frame(width: size.width / 2, height: size.height)
-            //                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            //                        /// Applying Shadow
-            //                        .shadow(color: .black.opacity(0.1), radius: 5, x: 5, y: 5)
-            //                        .shadow(color: .black.opacity(0.1), radius: 5, x: -5, y: -5)
-            //                }
-            //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
             }
             .frame(width: size.width)
             .rotation3DEffect(.init(degrees: convertOffsetToRotation(rect)), axis: (x: 5, y: 0, z: 0), anchor: .bottom, anchorZ: 1, perspective: 0.4)

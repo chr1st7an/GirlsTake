@@ -18,10 +18,15 @@ enum UserStateError: Error{
 class UserStateViewModel: ObservableObject {
     
     @Published var isLoggedIn = false
-    @Published var isBusy = false
     @Published var storageRef = Storage.storage().reference()
     @Published var databaseRef = Firestore.firestore()
     @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "21", location: "NYC", profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [])
+    
+    init(){
+        let settings = FirestoreSettings()
+        settings.isPersistenceEnabled = true
+        self.databaseRef.settings = settings
+    }
     
     func getPhoto(url:String) {
         let profileRef = storageRef.child(url)
@@ -42,10 +47,6 @@ class UserStateViewModel: ObservableObject {
         }
     
     func listenToAuthState() {
-        let settings = FirestoreSettings()
-        settings.isPersistenceEnabled = true
-        settings.cacheSizeBytes = FirestoreCacheSizeUnlimited
-        databaseRef.settings = settings
             Auth.auth().addStateDidChangeListener { [weak self] _, user in
                 guard let self = self else {
                     //no more logged in user

@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var userState: UserStateViewModel
     @StateObject var appState = AppState()
-    @StateObject var eventManager = EventManager()
+    @StateObject var eventState = EventStateViewModel()
+
     var body: some View {
         TabView(selection: $appState.selectedTab) {
                     NavigationView {
-                        HomeView(eventManager: eventManager)
+                        HomeView()
                     }.tag(ContentViewTab.home)
                      .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     NavigationView {
-                        CalendarView()
+                        EventsView(eventState: eventState)
                     }.tag(ContentViewTab.calendar)
                     .tabItem {
                         Label("Events", systemImage: "calendar")
@@ -60,7 +62,7 @@ enum CalendarNavDestination {
 }
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environmentObject(UserStateViewModel()).environmentObject(EventManager())
+        ContentView().environmentObject(UserStateViewModel()).environmentObject(EventStateViewModel())
     }
 }
 
