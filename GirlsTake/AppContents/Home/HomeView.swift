@@ -12,7 +12,15 @@ struct HomeView: View {
         VStack{
             Header()
             Spacer()
-            Text("social stuff")
+//            ScrollView(.vertical, showsIndicators: false){
+//                VStack(spacing: 25){
+//                    bubbletest(title: "social", traitArray: socialLife)
+//                    bubbletest(title: "values", traitArray: values)
+//                    bubbletest(title: "personality", traitArray: descriptors)
+//                    bubbletest(title: "fitness", traitArray: fitness)
+//                }
+//
+//            }
         }
     }
 }

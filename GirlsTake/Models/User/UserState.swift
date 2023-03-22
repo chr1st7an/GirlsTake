@@ -20,7 +20,16 @@ class UserStateViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var storageRef = Storage.storage().reference()
     @Published var databaseRef = Firestore.firestore()
-    @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "10/11/2001", age: 21, location: "NYC", links: [], profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [])
+    @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "10/11/2001", age: 21, location: "NYC", links: [], profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [], traitBadges: [])
+    @Published var isOnboarding = false
+    @Published var email : String = " "
+    @Published var password : String = " "
+    @Published var name : String = " "
+    @Published var dob : String = " "
+    @Published var location : String = " "
+    @Published var traitBadges : [String] = []
+    @Published var profilePhoto : UIImage = UIImage()
+    
     
     init(){
         let settings = FirestoreSettings()
@@ -81,32 +90,33 @@ class UserStateViewModel: ObservableObject {
             }
         }
     }
-    func register(password: String, email: String, displayName: String, profilePhoto: UIImage, DoB: Date, Location: String){
+    func register(){
         let formatter1 = DateFormatter()
         formatter1.dateStyle = .short
-        Auth.auth().createUser(withEmail: email, password: password){ result, error in if error != nil{
+        Auth.auth().createUser(withEmail: self.email, password: self.password){ result, error in if error != nil{
             //Add frontend pop-up alert for error
             //Figure out error catching for invalid Dob, Phone, etc.
             print(error!.localizedDescription)
         }else{
             self.isLoggedIn.toggle()
             //Adds profile photo to storage
-            self.updateProfilePhoto(photo: profilePhoto)
-            let dob = formatter1.string(from: DoB)
+            self.updateProfilePhoto(photo: self.profilePhoto)
+//            let dob = formatter1.string(from: DoB)
             //populates instance of userInfo
-            self.userProfile = UserProfile(id: displayName, email: email, dob: dob, age: 21, location: Location, links: [], profilePhoto: profilePhoto, eventsAttended: [])
-            self.getAge(date: dob)
+            self.userProfile = UserProfile(id: self.name, email: self.email, dob: self.dob, age: 21, location: self.location, links: [], profilePhoto: self.profilePhoto, eventsAttended: [], traitBadges: self.traitBadges)
+//            self.getAge(date: dob)
             let user = result?.user
             //writes user data to database with uid as key
             let docRef = self.databaseRef.collection("users").document(user!.uid)
             let userData: [ String: Any ] = [
-                "name": self.userProfile.id,
-                "email": self.userProfile.email,
+                "name": self.name,
+                "email": self.email,
                 "profileRef": "profile_photos/\(user!.uid).jpg",
-                "location": self.userProfile.location,
-                "dob": dob,
+                "location": self.location,
+                "dob": self.dob,
                 "links": self.userProfile.links,
-                "eventsAttended": self.userProfile.eventsAttended
+                "eventsAttended": self.userProfile.eventsAttended,
+                "traitBadges" : self.traitBadges
         
             ]
             docRef.setData(userData){error in
@@ -161,6 +171,7 @@ class UserStateViewModel: ObservableObject {
                     self.getPhoto(url: url)
                     self.getAge(date: data["dob"] as! String)
                     self.userProfile.links = data["links"] as! [String]
+                    self.userProfile.traitBadges = data["traitBadges"] as! [String]
                 }
             }
             
@@ -175,7 +186,7 @@ class UserStateViewModel: ObservableObject {
         self.userProfile.age = age.year ?? 1
     }
     func updateProfilePhoto(photo: UIImage){
-
+        self.userProfile.profilePhoto = photo
         let imageData = photo.jpegData(compressionQuality: 0.8)
 //        self.userInfo.profilePhotoURL = photo
         guard imageData != nil else{
@@ -209,17 +220,76 @@ class UserStateViewModel: ObservableObject {
             "links" : FieldValue.arrayUnion([url])])
         self.userProfile.links.append(url)
     }
+    func removeLink(social:String){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.getDocument {(document, error) in
+            guard error == nil else {
+                print("error", error ?? "")
+                return
+            }
+            if let document = document, document.exists {
+                let data = document.data()
+                if let data = data {
+                    let links = data["links"] as! [String]
+                    links.forEach { url in
+                        if url.localizedCaseInsensitiveContains(social){
+                            userRef.updateData([
+                                "links" : FieldValue.arrayRemove([url])])
+                            self.userProfile.links = self.userProfile.links.filter { $0 != url }
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+    func addTrait(trait: String){
+        if self.user == nil{
+            self.traitBadges.append(trait)
+        }else{
+            let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+            userRef.updateData([
+                "traitBadges" : FieldValue.arrayUnion([trait])])
+            self.userProfile.traitBadges.append(trait)
+        }
+    }
+    func removeTrait(trait: String){
+        if self.user == nil{
+            self.traitBadges = self.traitBadges.filter { $0 != trait }
+        }else{
+            let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+            userRef.updateData([
+                "traitBadges" : FieldValue.arrayRemove([trait])])
+            self.userProfile.traitBadges = self.userProfile.traitBadges.filter { $0 != trait }
+        }
+    }
 
     func joinEvent(event: Event){
         let userRef = self.databaseRef.collection("users").document(self.user!.uid)
         userRef.updateData([
             "eventsAttended" : FieldValue.arrayUnion([event.id!])])
+        self.userProfile.eventsAttended.append(event.id!)
     }
 
     func leaveEvent(event: Event){
         let userRef = self.databaseRef.collection("users").document(self.user!.uid)
         userRef.updateData([
             "eventsAttended" : FieldValue.arrayRemove([event.id!])])
+        self.userProfile.eventsAttended = self.userProfile.eventsAttended.filter { $0 != event.id! }
+    }
+    
+    func updateName(name: String){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "name" : name])
+        self.userProfile.id = name
+    }
+    func updateLocation(location: String){
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "location" : location])
+        self.userProfile.location = location
+        
     }
 }
 

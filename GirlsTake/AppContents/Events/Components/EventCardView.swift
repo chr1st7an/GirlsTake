@@ -52,12 +52,13 @@ func EventCardView(event: Event) -> some View {
                 Spacer(minLength: 10)
             }.padding(.leading, 28)
                 .padding(.top, 25)
-            .frame(width: size.width / 1.2, height: size.height * 0.8)
+            .frame(width: 350, height: size.height * 0.8)
             .background {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(gtCream)
                 /// Applying Shadow
                     .shadow(color: .black.opacity(0.08), radius: 8, x: 5, y: 5)
+                    .frame(width: 350)
             }
 
             }

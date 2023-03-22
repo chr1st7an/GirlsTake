@@ -10,7 +10,7 @@ import FirebaseStorage
 
 struct EventsView: View {
     @EnvironmentObject var vm: UserStateViewModel
-    @State private var path = NavigationPath()
+    @State private var path: [Event] = []
     @ObservedObject var eventState : EventStateViewModel
     @State private var name: String = ""
     @State private var carouselMode: Bool = false

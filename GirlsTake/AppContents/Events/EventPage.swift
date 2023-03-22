@@ -13,12 +13,13 @@ struct EventsPage: View {
     @EnvironmentObject var userState : UserStateViewModel
     @State var event : Event
     @State var eventManager : EventManager
-    @State private var inView: Bool = false
+    @State private var inView: Bool = true
     @State private var isActive: Bool = false
-    @State private var joining: Bool = true
+    @State private var joining: Bool = false
     @State private var size2 = 0.8
     @State private var opacity = 0.5
     @Namespace private var animation
+    @Namespace private var animation2
     
     var safeArea: EdgeInsets
     var size: CGSize
@@ -99,28 +100,15 @@ struct EventsPage: View {
                                         .offset(y: minY < 50 ? -(minY - 50) : 0)
                                     }
                                     // MORE INFO TOGGLE
-                                    if inView{
                                         Button {
                                             withAnimation(){
                                                 self.inView.toggle()
                                             }
                                         } label: {
                                             VStack{
-                                                Image(systemName: "chevron.up").padding(.top, 10)
+                                                Image(systemName: inView ? "chevron.up" : "chevron.down" ).padding(.top, 10)
                                             }
                                         }
-                                    }else{
-                                        Button {
-                                            withAnimation(){
-                                                self.inView.toggle()
-                                            }
-                                        } label: {
-                                            VStack{
-                                                Image(systemName: "chevron.down").padding(.top, 10)
-                                            }
-                                        }
-                                        
-                                    }
                                 }
                             }
                             .frame(height: 50)
@@ -137,11 +125,10 @@ struct EventsPage: View {
                                 }
                                 //USER VIEW
                                 if joining {
-                                    UserView()
-                                }else {
-                                    //Update with better loading screen
-                                    SplashView(size: $size2, opacity: $opacity, isActive: $joining)
+                                    loading().padding(.top, 20).matchedGeometryEffect(id: "list", in: animation2)
                                 }
+                                UserView().redacted(reason: joining ? .placeholder : []).matchedGeometryEffect(id: "list", in: animation2)
+                                
                                 Spacer()
                                 Image("Olives").resizable().frame(width: 50, height: 50).padding(.top, 40)
                             }.padding(.top,10)
@@ -153,6 +140,24 @@ struct EventsPage: View {
                     SplashView(size: $size2, opacity: $opacity, isActive: $isActive).transition(.opacity)
                 }
             }.ignoresSafeArea()
+        }
+    
+    @ViewBuilder
+    func loading()-> some View{
+        var downloadAmount = 0.0
+        let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+        VStack{
+            ProgressView("yasss slay…", value: downloadAmount, total: 100).progressViewStyle(.circular).tint(gtGreen).foregroundColor(gtGreen).fontDesign(.serif).onReceive(timer, perform: { _ in
+                if downloadAmount < 100 {
+                    downloadAmount += 10
+                } else{
+//                    withAnimation {
+                        joining.toggle()
+//                    }
+                    
+                }
+            })
+            }
         }
         
     
@@ -213,7 +218,6 @@ struct EventsPage: View {
             ForEach(self.eventManager.userBase.users ,id: \.self){user in
                     UserCardView(user: user)
                 }
-            
         }.padding(15)
     }
     @ViewBuilder

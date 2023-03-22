@@ -17,5 +17,6 @@ struct UserProfile: Hashable {
     var links : [String]
     var profilePhoto: UIImage
     var eventsAttended : [String]
+    var traitBadges : [String]
     
 }

@@ -72,8 +72,9 @@ struct LoginView: View {
                         )
                     }
                     NavigationLink("Don't have an account? Sign Up"){
-                        RegisterView()
-                    }.fontDesign(.serif).foregroundColor(.black)
+                        RegisteringView().tint(.white).foregroundColor(.white).navigationBarBackButtonHidden(true)
+                        
+                    }.fontDesign(.serif).foregroundColor(.black).navigationTitle("").tint(.white)
                 }.frame(width: 350)
             }.ignoresSafeArea()
         }

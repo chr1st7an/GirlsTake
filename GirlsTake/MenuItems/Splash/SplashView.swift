@@ -11,6 +11,7 @@ struct SplashView: View {
     @Binding var size : Double
     @Binding var opacity : Double
     @Binding var isActive : Bool
+    
     var body: some View {
         VStack {
                         VStack {
@@ -21,8 +22,8 @@ struct SplashView: View {
                                 .foregroundColor(.red)
                                 .padding(.bottom, -35)
                             Text("Girls Take")
-                                .font(Font.custom("Baskerville-Bold", size: 26))
-                                .foregroundColor(.black.opacity(0.80))
+                                .font(Font.custom("Italiana-Regular", size: 36))
+                                .foregroundColor(.black.opacity(0.95))
                         }
                         .scaleEffect(size)
                         .opacity(opacity)

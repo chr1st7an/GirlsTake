@@ -13,7 +13,11 @@ struct ContentDelegator: View {
     var body: some View {
         Group {
         if userState.user != nil {
-            ContentView()
+            if userState.isOnboarding {
+                OnboardingView()
+            }else{
+                ContentView()
+            }
         } else {
         LoginView()
         }
