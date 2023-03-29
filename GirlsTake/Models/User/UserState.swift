@@ -16,17 +16,22 @@ enum UserStateError: Error{
 
 @MainActor
 class UserStateViewModel: ObservableObject {
-    
+    @Published var isOnboarding = false
     @Published var isLoggedIn = false
     @Published var storageRef = Storage.storage().reference()
     @Published var databaseRef = Firestore.firestore()
     @Published var userProfile : UserProfile = UserProfile(id: "Name", email: "email@gmail.com", dob: "10/11/2001", age: 21, location: "NYC", links: [], profilePhoto: UIImage(imageLiteralResourceName: "Profile"), eventsAttended: [], traitBadges: [])
-    @Published var isOnboarding = false
+    @Published var photo1 = UIImage()
+    @Published var photo2 = UIImage()
+    @Published var photo3 = UIImage()
+    
+    
+    //All temp for registration flow
     @Published var email : String = " "
     @Published var password : String = " "
     @Published var name : String = " "
     @Published var dob : String = " "
-    @Published var location : String = " "
+    @Published var location : String = "NYC"
     @Published var traitBadges : [String] = []
     @Published var profilePhoto : UIImage = UIImage()
     
@@ -37,18 +42,6 @@ class UserStateViewModel: ObservableObject {
         self.databaseRef.settings = settings
     }
     
-    func getPhoto(url:String) {
-        let profileRef = storageRef.child(url)
-        profileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
-            if error == nil && data != nil {
-                if let image = UIImage(data: data!){
-                    DispatchQueue.main.async {
-                        self.userProfile.profilePhoto = image
-                    }
-                }
-            }
-        }
-    }
     var user: User? {
             didSet {
                 objectWillChange.send()
@@ -116,7 +109,8 @@ class UserStateViewModel: ObservableObject {
                 "dob": self.dob,
                 "links": self.userProfile.links,
                 "eventsAttended": self.userProfile.eventsAttended,
-                "traitBadges" : self.traitBadges
+                "traitBadges" : self.traitBadges,
+                "optionalPhotos": []
         
             ]
             docRef.setData(userData){error in
@@ -172,9 +166,46 @@ class UserStateViewModel: ObservableObject {
                     self.getAge(date: data["dob"] as! String)
                     self.userProfile.links = data["links"] as! [String]
                     self.userProfile.traitBadges = data["traitBadges"] as! [String]
+                    let urls = data["optionalPhotos"] as! [String]
+                    self.getPhotoCollection(urls: urls)
                 }
             }
             
+        }
+    }
+    
+    func getPhotoCollection(urls: [String]){
+        var index = 1
+        urls.forEach { url in
+            let profileRef = storageRef.child("profile_optional_photos/\(user!.uid)/\(url)")
+            profileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
+                if error == nil && data != nil {
+                    if let image = UIImage(data: data!){
+                        DispatchQueue.main.async {
+                            if index == 1 {
+                                self.photo1 = image
+                            }else if index == 2 {
+                                self.photo2 = image
+                            }else if index == 3 {
+                                self.photo3 = image
+                            }
+                            index += 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    func getPhoto(url:String) {
+        let profileRef = storageRef.child(url)
+        profileRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
+            if error == nil && data != nil {
+                if let image = UIImage(data: data!){
+                    DispatchQueue.main.async {
+                        self.userProfile.profilePhoto = image
+                    }
+                }
+            }
         }
     }
     func getAge(date: String){
@@ -220,28 +251,11 @@ class UserStateViewModel: ObservableObject {
             "links" : FieldValue.arrayUnion([url])])
         self.userProfile.links.append(url)
     }
-    func removeLink(social:String){
+    func removeLink(url: String){
         let userRef = self.databaseRef.collection("users").document(self.user!.uid)
-        userRef.getDocument {(document, error) in
-            guard error == nil else {
-                print("error", error ?? "")
-                return
-            }
-            if let document = document, document.exists {
-                let data = document.data()
-                if let data = data {
-                    let links = data["links"] as! [String]
-                    links.forEach { url in
-                        if url.localizedCaseInsensitiveContains(social){
-                            userRef.updateData([
-                                "links" : FieldValue.arrayRemove([url])])
-                            self.userProfile.links = self.userProfile.links.filter { $0 != url }
-                        }
-                    }
-                }
-                
-            }
-        }
+        userRef.updateData([
+            "links" : FieldValue.arrayRemove([url])])
+        self.userProfile.links = self.userProfile.links.filter { $0 != url }
     }
     func addTrait(trait: String){
         if self.user == nil{
@@ -291,6 +305,57 @@ class UserStateViewModel: ObservableObject {
         self.userProfile.location = location
         
     }
+    func addPhotos(photo: UIImage, number: String){
+        if number == "1" {
+            self.photo1 = photo
+        }else if number == "2" {
+            self.photo2 = photo
+        }else if number == "3" {
+            self.photo3 = photo
+        }
+        let imageData = photo.jpegData(compressionQuality: 0.8)
+//        self.userInfo.profilePhotoURL = photo
+        guard imageData != nil else{
+            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+            changeRequest?.photoURL = URL(string: "profile_optional_photos/base.url")
+            changeRequest?.commitChanges { error in
+            }
+            return
+        }
+
+        let user = self.user
+
+        let path = "profile_optional_photos/\(user!.uid)/\(number).jpg"
+        let fileRef = storageRef.child(path)
+
+        fileRef.putData(imageData!, metadata: nil) { metadata,
+            error in
+
+            if error == nil && metadata != nil {
+                let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                changeRequest?.photoURL = URL(string: path)
+                changeRequest?.commitChanges { error in
+                  // ...
+                }
+            }
+        }
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "optionalPhotos" : FieldValue.arrayUnion(["\(number).jpg"])])
+    }
+    func removePhotos(number: String){
+        if number == "1" {
+            self.photo1 = UIImage()
+        }else if number == "2" {
+            self.photo2 = UIImage()
+        }else if number == "3" {
+            self.photo3 = UIImage()
+        }
+        let userRef = self.databaseRef.collection("users").document(self.user!.uid)
+        userRef.updateData([
+            "optionalPhotos" : FieldValue.arrayRemove(["\(number).jpg"])])
+    }
+
 }
 
 

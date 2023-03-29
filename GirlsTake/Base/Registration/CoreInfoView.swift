@@ -19,9 +19,8 @@ struct CoreInfoView: View {
     @State var name = ""
     @State var dob = "mm/dd/yy"
     @State var date = Date.now
-    @State var selectedItem: PhotosPickerItem? = nil
-    @State var selectedImageData: Data? = nil
-    @State var profilePhoto: UIImage = UIImage()
+    @State private var showPicker: Bool = false
+    @State private var croppedImage: UIImage?
     @State var userinfo : [InfoSlideModel] = registration
     var slideInfo : InfoSlideModel
     var body: some View {
@@ -42,9 +41,45 @@ struct CoreInfoView: View {
                         .font(.system(size: 17, weight: .regular))
                         .animation(Animation.interpolatingSpring(stiffness: 40, damping: 8))
                     VStack(spacing: 50){
+//                        ZStack{
+//                            if selectedImageData != nil{
+//                                Image(uiImage: profilePhoto)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 200, height: 200)
+//                                    .clipShape(Circle())
+//                            } else{
+//                                Image(systemName: "person.crop.circle")
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: 200, height: 200)
+//                                    .clipShape(Circle())
+//                                    .font(Font.title.weight(.ultraLight))
+//                                    .foregroundColor(.gray)
+//                            }
+//                            PhotosPicker(
+//                                selection: $selectedItem,
+//                                matching: .images,
+//                                photoLibrary: .shared()) {
+//                                    Image(systemName: "pencil.circle.fill")
+//                                        .symbolRenderingMode(.multicolor)
+//                                        .padding([.top, .leading], 130.0)
+//                                        .font(.system(size: 40))
+//                                        .foregroundColor(gtGreen)
+//                                }
+//                                .onChange(of: selectedItem) { newItem in
+//                                    Task {
+//                                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+//                                            selectedImageData = data
+//                                            profilePhoto = UIImage(data: selectedImageData!)!
+//                                            self.userState.profilePhoto = profilePhoto
+//                                        }
+//                                    }
+//                                }
+//                        }
                         ZStack{
-                            if selectedImageData != nil{
-                                Image(uiImage: profilePhoto)
+                            if let croppedImage{
+                                Image(uiImage: croppedImage)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 200, height: 200)
@@ -58,26 +93,27 @@ struct CoreInfoView: View {
                                     .font(Font.title.weight(.ultraLight))
                                     .foregroundColor(.gray)
                             }
-                            PhotosPicker(
-                                selection: $selectedItem,
-                                matching: .images,
-                                photoLibrary: .shared()) {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .symbolRenderingMode(.multicolor)
-                                        .padding([.top, .leading], 130.0)
-                                        .font(.system(size: 40))
-                                        .foregroundColor(gtGreen)
-                                }
-                                .onChange(of: selectedItem) { newItem in
-                                    Task {
-                                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                            selectedImageData = data
-                                            profilePhoto = UIImage(data: selectedImageData!)!
-                                            self.userState.profilePhoto = profilePhoto
-                                        }
-                                    }
-                                }
-                        }
+                            Button {
+                                showPicker.toggle()
+
+                            } label: {
+                                Image(systemName: "pencil.circle.fill")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .symbolRenderingMode(.multicolor)
+                                    .padding([.top, .leading], 130.0)
+                                    .font(.callout)
+                                    .foregroundColor(gtGreen)
+                            }
+                            .tint(gtGreen)
+                        }.padding(.bottom, 25)
+                            .cropImagePicker(
+                                options: [.circle],
+                                show: $showPicker,
+                                croppedImage: $croppedImage
+                            ).onChange(of: croppedImage, perform: { newValue in
+                                self.userState.profilePhoto = croppedImage!
+                            })
                         .padding().animation(Animation.interpolatingSpring(stiffness: 40, damping: 8))
                             TextField("name", text: $name).textFieldStyle(SimpleTextFieldBackground(systemImageString: "person", buttonSystemImageString: "", callback: $isDatePicker)).font(Font.custom("Italiana-Regular", size: 17)).autocorrectionDisabled().submitLabel(.next).focused($focusField,equals: .name).onSubmit {
                                 focusField = .dob
@@ -117,7 +153,7 @@ struct CoreInfoView: View {
 //                        }
                         VStack{
                             DropDown(content: ["NYC", "Boston", "Philly"], selection: $selection, activeTint: gtPink, inActiveTint: gtPink).padding(.bottom, -8).onChange(of: selection) { newValue in
-                                userState.location = newValue.lastSelection
+                                userState.location = newValue.value
                             }
                             Rectangle().frame(width: 330, height:1.5).foregroundColor(.gray.opacity(0.5)).padding(.leading, -23)
                         }.padding(.top, -8)

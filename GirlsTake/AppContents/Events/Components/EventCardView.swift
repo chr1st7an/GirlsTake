@@ -57,7 +57,7 @@ func EventCardView(event: Event) -> some View {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(gtCream)
                 /// Applying Shadow
-                    .shadow(color: .black.opacity(0.08), radius: 8, x: 5, y: 5)
+//                    .shadow(color: .black.opacity(0.08), radius: 8, x: 5, y: 5)
                     .frame(width: 350)
             }
 

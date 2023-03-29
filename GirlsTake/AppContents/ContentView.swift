@@ -13,7 +13,8 @@ struct ContentView: View {
     @StateObject var eventState = EventStateViewModel()
     @State private var tabSelection = 1
     @State private var tappedTwice: Bool = false
-
+    @StateObject fileprivate var gestureManager = UniversalGestureManager()
+    @Environment(\.isDragging) var isDragging
     @State private var home = UUID()
     @State private var event = UUID()
     @State private var profile = UUID()
@@ -32,7 +33,7 @@ struct ContentView: View {
         
         return TabView(selection: handler) {
                     NavigationView {
-                        HomeView().onChange(of: tappedTwice, perform: { tappedTwice in
+                        HomeView().environment(\.isDragging, gestureManager.isDragging).onChange(of: tappedTwice, perform: { tappedTwice in
                             guard tappedTwice else { return }
                             home = UUID()
                             self.tappedTwice = false
@@ -42,7 +43,7 @@ struct ContentView: View {
                         Label("Home", systemImage: "house")
                      }.tag(1)
                     NavigationView {
-                        EventsView(eventState: eventState).onChange(of: tappedTwice, perform: { tappedTwice in
+                        EventsView(eventState: eventState).environment(\.isDragging, gestureManager.isDragging).onChange(of: tappedTwice, perform: { tappedTwice in
                             guard tappedTwice else { return }
                             home = UUID()
                             self.tappedTwice = false
@@ -52,7 +53,7 @@ struct ContentView: View {
                         Label("Events", systemImage: "calendar")
                     }.tag(2)
                     NavigationView {
-                        ProfileView().onChange(of: tappedTwice, perform: { tappedTwice in
+                        ProfileView().environment(\.isDragging, gestureManager.isDragging).onChange(of: tappedTwice, perform: { tappedTwice in
                             guard tappedTwice else { return }
                             home = UUID()
                             self.tappedTwice = false
@@ -65,34 +66,58 @@ struct ContentView: View {
     }
     
 }
-
-//class AppState: ObservableObject {
-//    @Published var selectedTab: ContentViewTab = .home
-//    @Published var homeNavigation: [HomeNavDestination] = []
-//    @Published var profileNavigation: [ProfileNavDestination] = []
-//    @Published var eventNavigation: [eventNavDestination] = []
-//}
-//enum ContentViewTab {
-//    case home
-//    case event
-//    case profile
-//}
-//enum HomeNavDestination {
-//    case settings
-////    case eventDetails
-////    case otherDetails
-//}
-//
-//enum ProfileNavDestination {
-//    case settings
-//}
-//enum eventNavDestination {
-//    case eventDetails
-//    case settings
-//}
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environmentObject(UserStateViewModel()).environmentObject(EventStateViewModel())
+fileprivate class UniversalGestureManager: NSObject, UIGestureRecognizerDelegate,ObservableObject{
+    let gestureID = UUID().uuidString
+    @Published var isDragging: Bool = false
+    
+    override init() {
+        super.init()
+        addGesture()
+    }
+    
+    func addGesture(){
+        let panGesture = UIPanGestureRecognizer()
+        panGesture.name = gestureID
+        panGesture.delegate = self
+        panGesture.addTarget(self, action: #selector(onGestureChange(gesture:)))
+        rootWindow.rootViewController?.view.addGestureRecognizer(panGesture)
+    }
+    
+    var rootWindow: UIWindow{
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else{
+            return .init()
+        }
+        guard let window = windowScene.windows.first else{
+            return .init()
+        }
+        
+        return window
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    @objc
+    func onGestureChange(gesture: UIPanGestureRecognizer){
+        if gesture.state == .changed || gesture.state == .began{
+            isDragging = true
+        }
+        if gesture.state == .ended || gesture.state == .cancelled{
+            isDragging = false
+        }
     }
 }
+
+fileprivate struct UniversalGesture: EnvironmentKey{
+    static let defaultValue: Bool = false
+}
+
+extension EnvironmentValues{
+    var isDragging: Bool{
+        get{self[UniversalGesture.self]}
+        set{self[UniversalGesture.self] = newValue}
+    }
+}
+
 
