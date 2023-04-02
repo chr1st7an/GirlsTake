@@ -237,7 +237,7 @@ struct InfoSlideView: View {
             CoreInfoView(slideInfo: slideInfo)
         } else if slideInfo.title == "Define yourself"{
 //          profile badges
-            ProfileBadgeInputView(slideInfo: slideInfo)
+//            ProfileBadgeInputView(slideInfo: slideInfo)
         } else if slideInfo.title == "Lets wrap things up :)"{
 //          social links
             LocationInputView(slideInfo: slideInfo)

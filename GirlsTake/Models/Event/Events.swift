@@ -8,12 +8,4 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 
-struct Event: Identifiable, Hashable {
-    @DocumentID var id: String?
-    var Title : String
-    var Address : String
-    var Venue : String
-    var Date : String
-    var AttendeesString : [String]
-    var Cover : String
-}
+

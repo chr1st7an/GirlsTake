@@ -9,52 +9,55 @@ import SwiftUI
 import Firebase
 import FirebaseCore
 import FirebaseAppCheck
-
-final class AppDelegate: NSObject, UIApplicationDelegate {
-    let providerFactory = YourSimpleAppCheckProviderFactory()
-    
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
-        AppCheck.setAppCheckProviderFactory(providerFactory)
-        
-        FirebaseApp.configure()
-        return true
-    }
-}
+//
+//final class AppDelegate: NSObject, UIApplicationDelegate {
+//    let providerFactory = YourSimpleAppCheckProviderFactory()
+//
+//    func application(_ application: UIApplication,
+//                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//
+//        AppCheck.setAppCheckProviderFactory(providerFactory)
+//
+//        FirebaseApp.configure()
+//        return true
+//    }
+//}
 
 @main
 struct GirlsTakeApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+//    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var userStateViewModel = UserStateViewModel()
-    @State private var isActive = false
-    @State private var size = 0.8
-    @State private var opacity = 0.5
+//    @State private var isActive = false
+//    @State private var size = 0.8
+//    @State private var opacity = 0.5
     
-//    init(){
+    init(){
 //        let providerFactory = YourAppCheckProviderFactory()
 //        AppCheck.setAppCheckProviderFactory(providerFactory)
-//        FirebaseApp.configure()
-//    }
+        FirebaseApp.configure()
+    }
     
     var body: some Scene {
         WindowGroup {
-            if isActive{
-                NavigationView{
-                    ContentDelegator().environmentObject(userStateViewModel)
-                }
-                .navigationViewStyle(.stack)
-                
-            }else {
-                SplashView(size: $size, opacity: $opacity, isActive: $isActive)
-            }
-                }
+            ContentDelegator().environmentObject(userStateViewModel)
+        }
+//        WindowGroup {
+//            if isActive{
+//                NavigationView{
+//                    ContentDelegator().environmentObject(userStateViewModel)
+//                }
+//                .navigationViewStyle(.stack)
+//
+//            }else {
+//                SplashView(size: $size, opacity: $opacity, isActive: $isActive)
+//            }
+//                }
     }
 }
-class YourSimpleAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
-  func createProvider(with app: FirebaseApp) -> AppCheckProvider? {
-    return AppAttestProvider(app: app)
-  }
-}
+//class YourSimpleAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
+//  func createProvider(with app: FirebaseApp) -> AppCheckProvider? {
+//    return AppAttestProvider(app: app)
+//  }
+//}
 
 

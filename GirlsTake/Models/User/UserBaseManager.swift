@@ -38,7 +38,6 @@ class UserBaseManager: ObservableObject {
                                 }
                             }
                         }
-
                     }
                 }
             }
